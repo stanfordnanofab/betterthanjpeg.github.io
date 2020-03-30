@@ -1,0 +1,516 @@
+<html>
+<header><title>Dielectric Tool Selection Guide</title>
+<style>
+p.absolute {
+  position: absolute;
+  top: 190px;
+  left: 55px;
+  font-size: 22px;
+  max-width: 700px;
+}
+p.absolute2 {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  font-size: 15px;
+  max-width: 900px;
+}
+p.absolute3 {
+  position: absolute;
+  top: 820px;
+  left: 55px;
+  font-size: 22px;
+  max-width: 700px;
+}
+
+body {
+    padding-bottom: 1000px;
+}
+
+
+/* The popup form - hidden by default */
+.form-popup {
+  display: none;
+  position: fixed;
+  top: 200;
+  left: 300px;
+  border: 3px solid #f1f1f1;
+  z-index: 9;
+}
+
+/* Add styles to the form container */
+.form-container {
+  max-width: 300px;
+  padding: 10px;
+  background-color: white;
+}
+
+/* Full-width input fields */
+.form-container input[type=text]{
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  border: none;
+  background: #f1f1f1;
+}
+
+.form-container output[type=text]{
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  border: none;
+  background: #f1f1f1;
+}
+
+/* Set a style for the search button */
+.form-container .cancel {
+  background-color: red;
+  color: white;
+  padding: 16px 20px;
+  cursor: pointer;
+  width: 49.2%;
+  margin-bottom:10px;
+  opacity: 0.8;
+}
+
+.form-container .help {
+  background-color: yellow;
+  color: black;
+  padding: 16px 20px;
+  cursor: pointer;
+  width: 49.2%;
+  margin-bottom:10px;
+  opacity: 0.8;
+}
+
+.form-container .search {
+  background-color: blue;
+  color: white;
+  padding: 16px 20px;
+  cursor: pointer;
+  width: 49.2%;
+  margin-bottom:10px;
+  opacity: 0.8;
+}
+
+.form-container .accept {
+  background-color: #4CAF50;
+  color: white;
+  padding: 16px 20px;
+  cursor: pointer;
+  width: 49.2%;
+  margin-bottom:10px;
+  opacity: 0.8;
+}
+
+</style>
+</header>
+<meta charset="UTF-8">
+<meta name="description" content="Tester page for defining dielectric selection tool at SNF.">.
+<meta name="author" content="Sam">
+
+<body>
+
+<p class = "absolute", id="bot output"></p>
+<p class = "absolute2", id="help output"></p>
+<p class = "absolute3", id="bot output2"></p>
+<div style="width:700px; height:50px; position: absolute; left:50px; top:210px; border:3px solid green;"></div>
+<div style="width:700px; height:50px; position: absolute; left:50px; top:840px; border:3px solid green;"></div>
+
+<div class="form-popup" id="myForm">
+  <form action="/action_page.php" class="form-container">
+    <h1>Material Search</h1>
+
+    <label for="MatEntry"><b>Enter Material</b></label>
+    <input type="text" placeholder="Enter Material" name="MatEntry" id = "mat_ent" required>
+
+	<label for="MatResult"><b>Material Match</b></label>
+    <p id = "mat_res" required>Result:</p>
+	
+    <button type="button" class="btn search" onclick="lookAtList()">Search</button>
+	<button type="button" class="btn accept" onclick="acceptAnswer()">Accept</button>
+    <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
+	<button type="button" class="btn help" onclick="printList()">Show Materials</button>
+  </form>
+</div>
+
+<script>
+var listPlace = 4;
+var x = [];
+function openForm() {
+  document.getElementById("myForm").style.display = "block";
+}
+
+function closeForm() {
+  document.getElementById("myForm").style.display = "none";
+}
+
+function lookAtList() {
+	var inp = document.getElementById("mat_ent").value;
+	inp = inp.toLowerCase();
+	var str = 'No matches'
+	for (var i = 0; i < list.length; i++) {
+		for (var j = 0; j < AKAs[i].length; j++) {
+			if(inp == AKAs[i][j].toLowerCase()){
+				str = list[i]
+			}
+		}
+	}
+	document.getElementById("mat_res").innerHTML =  "Result: " + str;
+}
+
+function acceptAnswer() {
+	var inp = document.getElementById("mat_res").textContent;
+	inp = inp.substring(8, inp.length);
+	x[listPlace] = inp;
+	document.getElementById(listPlace).innerHTML = 'Deposited Material: ' + inp;
+	writeGuide();
+}
+
+function printList() {
+	document.getElementById("help output").innerHTML = list.toString();
+}
+
+function myFunction(y, a) {
+	x[y] = a;
+	}
+function writeFunction(y, a) {
+	if(a >= 0){
+		var str = Allnames[y][a];
+	}
+	else{
+		var str = "";
+	}
+	document.getElementById(y).innerHTML =  AllPrompts[y] + ': ' + str;
+}
+
+function helpFunction(a){
+	if(a >= 0){
+		var str = Help[a];
+		}
+	else{
+		var str = "Welcome to the tool selection helper! The goal of this tool is to help users pick an appropriate tool from the variety of options at SNF.<br><br>There are a series of tool options listed in textboxes to the left. Click the button corresponding to your needs. If you do not care about the tool option or it does not describe your process (i.e. asking about ALD when you are doing CVD), leave it blank. If you do not understand the question, click the 'Help' button in yellow for more details on what is being asked about.<br><br>The top textbox lists all tools which fit the requirements specified thus far. To open the SNF wiki links for each viable tool, click the green 'Open SNF Wiki Links' button.";
+	}
+	document.getElementById("help output").innerHTML = str;
+}
+function writeGuide(){
+	var toSearch = AllGuides.length;
+	var str = 'Viable Tools: ';
+	var l0 = str.length;
+	var ps = AllGuides[0].length;
+	for (var i = 0; i < toSearch; i++) {
+		var Viable = true;
+		var tempGuide = AllGuides[i];
+		for (var j = 0; j < ps; j++){
+			var bool = false;
+			for (var k = 0; k < tempGuide[j].length; k++){
+				if (tempGuide[j][k] == x[j]){
+					bool = true;
+					}
+				}
+			if (bool == false){
+					Viable = false;
+				}
+			}
+		if(Viable == true){
+			str = str + AllTools[i].toString() + ', ';
+		}
+	}
+	if(str.length > l0){
+		str = str.substring(0, str.length - 2);
+	}
+	document.getElementById("bot output").innerHTML = str;
+	document.getElementById("bot output2").innerHTML = str;
+}
+
+function openInfo(){
+	var toSearch = AllGuides.length;
+	var str = [];
+	var res = [];
+	var l0 = str.length;
+	var ps = AllGuides[0].length;
+	for (var i = 0; i < toSearch; i++) {
+		var Viable = true;
+		var tempGuide = AllGuides[i];
+		for (var j = 0; j < ps; j++){
+			var bool = false;
+			for (var k = 0; k < tempGuide[j].length; k++){
+				if (tempGuide[j][k] == x[j]){
+					bool = true;
+					}
+				}
+			if (bool == false){
+					Viable = false;
+				}
+			}
+			
+		if(Viable == true){
+			str.push(AllTools[i].toString());
+			res.push(AllLinks[i]);
+		}
+	}
+	var result = '';
+	for (var i = 0; i < str.length; i++){
+		 window.open(res[i], "_blank"); 
+	}
+}
+
+var AllPrompts = ["Contamination Status", "Highest Temperature Allowed", "Thickness", "Si-based Dielectric Type", "ALD-Based Dielectric Type", "Wafer Size", "Substrate Type", "Batch Size"]
+var Allnames = [["Clean", "Semiclean", "Gold Cont", "Clear Answer"], ["60-80C", "100-200C", "300-450C", "Clear Answer"], ["<5nm/very thin", ">50nm", ">2 micron", "Clear Answer"], ["Deposited SiO2", "Grown SiO2", "SiNx", "Si3N4", "Oxynitride", "Doped Si", "Clear Answer"], ["Any ALD", "Any Thermal ALD", "Any Plasma ALD", "Choose Material", "Clear Answer"], ["4'' Wafer", "6'' Wafer", "Piece/Chip", "Clear Answer"], ["Si", "GaAs/III-V", "Clear Answer"], ["<5 Wafers", "<10 Wafers", "Large Batch", "Clear Answer"]]
+
+var AllTools = ["ccp-dep", "hdpcvd", "sts", "fiji1", "fiji2", "fiji3",
+ "savannah", "mvd", "tylanbpsg", "tylan9", "thermconitride", "thermcopoly", "thermcopoly2", "thermcolto"];
+var AllLinks = ['https://snfexfab.stanford.edu/equipment/plasmatherm-shuttlelock-pecvd-system-ccp-dep', 'https://snfexfab.stanford.edu/equipment/plasmatherm-versaline-hdp-cvd-system-hdpcvd',
+'https://snfexfab.stanford.edu/equipment/sts-plasma-enhanced-cvd-sts', 'https://snfexfab.stanford.edu/equipment/fiji-1-fiji1', 'https://snfexfab.stanford.edu/equipment/fiji-2-fiji2', 'https://snfexfab.stanford.edu/equipment/fiji-3-fiji3',
+'https://snfexfab.stanford.edu/equipment/savannah-savannah',  'https://snfexfab.stanford.edu/equipment/training/mvd-training', 'https://snfexfab.stanford.edu/equipment/tylanbpsg-tylanbpsg',
+'https://snfexfab.stanford.edu/equipment/tylan9-tylan9', 'https://snfexfab.stanford.edu/equipment/thermconitride-thermconitride1', 'https://snfexfab.stanford.edu/equipment/training/thermco-poly-deposition-furnace-training', 'https://snfexfab.stanford.edu/equipment/training/thermco-poly-deposition-furnace-training', 'https://snfexfab.stanford.edu/equipment/thermcolto-thermcolto']
+
+var list = ['Al2O3', 'HfO2', 'HfN', 'Pt', 'Ru', 'SiO2', 'TaN', 'Ta2O5', 'TiO2', 'TiN', 'ZrO2', 'SiN', 'NiO',
+'Ga2O3', 'In2O3', 'ITO', 'MoO3', 'SrO', 'SnO2', 'WN', 'FeO', 'Y2O3', 'La2O3', 'BaO', 'Co3O4',
+'ZnO', 'AZO', 'ZnO3', 'ZrO2', 'APTES', 'DETA', 'ODS', 'SAMS'];
+var AKAs = [['Al2O3', 'Alumina', 'Aluminum oxide'], ['HfO2', 'Hafnia', 'hafnium oxide'], ['HfN', 'Hafnium Nitride'], ['Pt', 'Platinum'],
+['Ru', 'Ruthenium'], ['SiO2', 'Silicon dioxide', 'silicon oxide', 'oxide'], ['TaN', 'tantalum nitride'],
+['Ta2O5', 'Tantalum Pentoxide'], ['TiO2', 'Titania'], ['TiN', 'Titanium nitride', 'Ti nitride'], ['ZrO2', 'Zirconia', 'Zirconium oxide'], ['SiN', 'Nitride', 'Silicon Nitride'], ['NiO', 'Niobium oxide', 'Niobia'],
+['Ga2O3', 'Gallium Oxide'], ['In2O3', 'Indium Oxide'], ['ITO', 'Indium Tin Oxide', 'InSnO'], ['MoO3', 'Molybdenum Oxide'], ['SrO', 'Strontium Oxide'], ['SnO2', 'Tin Oxide'], ['WN', 'Tungsten nitride'],
+['FeO', 'Iron Oxide'], ['Y2O3', 'Yttrium oxide'], ['La2O3', 'Lanthinum oxide'], ['BaO', 'Barium Oxide'], ['CoO4', 'Cobalt Oxide'], ['ZnO', 'Zinc Oxide'],
+['AZO', 'AlZnO'], ['ZnO3', 'Zinc Oxide'], ['ZrO2', 'Zirconia'], ['APTES', 'CHNOSi'], ['DETA'], ['ODS', 'CHOSi', 'C21H46O3Si'], ['SAMS']];
+
+var AllGuides = [];
+AllGuides.push([[-1, 0, 1, 2], 
+                   [-1, 2], [-1, 1, 2],
+                   [-1, 0, 2], [-1],
+                   [-1, 0, 1], [-1, 0],
+                   [-1, 0, 1]]);
+AllGuides.push([[-1, 0, 1, 2],
+                  [-1, 0, 1, 2], [-1, 1, 2],
+                  [-1, 0, 2], [-1],
+                  [-1, 0], [-1, 0],
+                  [-1, 0]]);
+AllGuides.push([[-1, 2], 
+               [-1, 2], [-1, 1, 2], 
+               [-1, 0, 2, 4], [-1],
+               [-1, 0, 1, 2], [-1, 0],
+               [-1, 0, 1]]);
+//Fiji1
+AllGuides.push([[-1, 1],
+                 [-1, 0, 1, 2], [-1, 0],
+                 [-1, 0, 2], [-1, 0, 1, 2, 'Al2O3', 'HfO2', 'HfN', 'Pt', 'Ru', 'SiO2', 'TaN', 'Ta2O5', 'TiO2', 'TiN', 'ZrO2', 'SiN', 'NiO', 'WN'],
+                 [-1, 0, 1, 2], [-1, 0],
+                 [-1, 0]]);
+AllGuides.push([[-1, 1, 2],
+                 [-1, 0, 1, 2], [-1, 0],
+                 [-1, 0, 2], [-1, 0, 1, 2, 'Ta2O5', 'TiO2', 'TiN', 'ZrO2', 'SiN', 'Al2O3', 'HfO2', 'HfN', 'Pt', 'Ru', 'SiO2', 'Ga2O3', 'InO3', 'ITO', 'MoO3', 'NiO', 'SrO', 'SnO2', 'WN', 'FeO', 'Y2O3', 'La2O3', 'BaO', 'Co3O4'],
+                 [-1, 0, 1, 2], [-1, 0],
+                 [-1, 0]]);
+AllGuides.push([[-1, 2],
+                 [-1, 0, 1, 2], [-1, 0],
+                 [-1, 0], [-1, 0, 1, 2, 'Al2O3', 'HfO2', 'SiO2', 'TiO2', 'FeO', 'Y2O3', 'La2O3', 'BaO', 'Co3O4', 'SrO', 'NiO', 'Ta2O5', 'ZrO2'],
+                 [-1, 0, 1, 2], [-1, 0],
+                 [-1, 0]]);
+AllGuides.push([[-1, 2],
+                    [-1, 1, 2], [-1, 0],
+                    [-1], [-1, 0, 1, 'TiO2', 'HfO2', 'ZrO2', 'Ta2O5', 'ZnO3', 'ZrO2', 'SnO2', 'ZnO', 'Ga2O3', 'Al2O3', 'AZO'],
+                    [-1, 0, 1, 2], [-1, 0],
+                    [-1, 0]]);
+AllGuides.push([[-1, 2],
+                    [-1, 1, 2], [-1, 0],
+                    [-1], [-1, 0, 1, 'Al2O3', 'APTES', 'DETA', 'HfO2', 'ODS', 'SAMS'],
+                    [-1, 0, 1, 2], [-1, 0],
+                    [-1, 0]]);
+AllGuides.push([[-1, 1],
+                      [-1, 2], [-1, 1],
+                      [-1, 0], [-1],
+                      [-1, 0], [-1, 0],
+                      [-1, 0, 1, 2]]);
+AllGuides.push([[-1, 2],
+                  [-1], [-1, 1],
+                  [-1, 1], [-1],
+                  [-1, 0], [-1, 0],
+                  [-1, 0, 1, 2]]);
+AllGuides.push([[-1, 0],
+                           [-1], [-1, 1],
+                           [-1, 3], [-1],
+                           [-1, 0], [-1, 0],
+                           [-1, 0, 1, 2]]);
+AllGuides.push([[-1, 0],
+                       [-1], [-1, 1],
+                       [-1, 5], [-1],
+                      [-1, 0], [-1, 0],
+                       [-1, 0, 1, 2]]);
+AllGuides.push([[-1, 2],
+                        [-1], [-1, 1],
+                       [-1, 5], [-1],
+                      [-1, 0], [-1, 0],
+                        [-1, 0, 1, 2]]);
+AllGuides.push([[-1, 1, 2],
+                      [-1, 2], [-1, 1],
+                      [-1, 1], [-1],
+                      [-1, 0], [-1, 0],
+                      [-1, 0, 1, 2]]);
+			 
+questions = Allnames.length;
+maxL = 0;
+var Help = [];
+for (var j = 0; j < questions; j++){
+	var names = Allnames[j];
+	if(names.length > maxL){
+		maxL = names.length;
+	}
+    x.push(-1);
+	Help.push("");
+}
+Help[1] = "SNF classifies tools as clean, semi-clean, or gold contaminated. Once a clean wafer is placed in a gold contaminated tool, it is considered gold contaminated and cannot be placed back in a clean tool. Make sure you design your process such that any gold contaminated processing steps happen at the end."
+Help[2] = "Select the maximum temperature which will not damage other layers on your substrate. If you can take very high temperature, simply leave this prompt blank. 60-80C corresponds to the temperature of plasma-enhanced ALD, barely above room temperature. 100-200C is for high density plasma plasma-enhanced CVD processes. Standard plasma-enhanced CVD occurs from 300-450C. The furnaces for low pressure CVD and oxide growth are largely above this range, approaching 1000C."
+Help[3] = "If you need a continuous film that is <5nm, you likely need ALD. However, ALD is slow and cannot be done at SNF for layers above 50nm. Oxide cannot be grown for very thick layers, although both LPCVD and PECVD can deposit multiple micron-thick layers."
+Help[4] = "CVD tools largely deposit silicon oxide or silicon nitride. The plasma enhanced CVD tools (PECVD) tend to deposit slightly lower quality oxide and not stoichiometric nitride. However, it is done at lower temperature and the resulting film can be tuned more without dopants. Furnaces can be used for oxide growth in exisiting silicon and stoichiometric nitride."
+Help[6] = "Some wafer holders cannot accomodate 6'' wafers, and pieces often must be attached to 4'' wafers for loadlock systems or ALD tools with gas flow."
+Help[5] = "If you need a highly conformal or non-silicon based dielectric film, you likely need ALD.\n\nPlasma enhanced ALD processes occur at lower temperature and can be used for non-oxides. However, at SNF those are the Fiji tools which also have a finnicky transfer arm, fail more often, and are harder to get time on. If you do not have a preference but know you need ALD, choose the more general first option."
+Help[7] = "Many tools, in particular ones which go to high temperature and must be concerned with contamination, do not allow non-Si substrates. SiO2 or SiNx coated wafers can be treated as Si for the purpose of this question. GaAs is the most common non-Si or oxide substrate used at SNF."
+Help[8] = "The ALD tools are slow and can only take 1-2 wafers at a time. Therefore large throughput processes are not good fits for ALD. The high density PECVD tools also only process one wafer at a time. There are PECVD tools which can handle 3-4 wafers at a time and are appropriate for moderate-sized batches. Once a user is processiing 20 or more wafers, only the full-cassette processing furnace-based tools are appropriate."
+
+helpFunction(-1)
+myFunction(0, -1);
+writeGuide();
+for (var j = 0; j < questions; j++){
+	var offset = 180;
+	var head = document.createElement('header');
+	docFrag = document.createDocumentFragment();
+	var names = Allnames[j];
+	Qs = names.length;
+	var outP = document.createElement('output');
+	outP.id = j;
+	outP.style.position = 'absolute';
+	locP1 = (25).toString() + 'px';
+    locP2 = (100 + offset + 70*j).toString() + 'px';
+	outP.style.left = locP1;
+	outP.style.top = locP2;
+	//outP.style.border = '1px solid Green';
+	docFrag.appendChild(outP);
+	var box = document.createElement('div');
+	box.style.width = '695';
+	box.style.height = '20';
+	box.style.border = '1px solid #000';
+	box.style.position = 'absolute';
+	box.style.left = (20).toString() + 'px';
+	box.style.top = (99 + offset + 70*j).toString() + 'px';
+	docFrag.appendChild(box);
+	outP.value =  AllPrompts[j] + ':';
+	for (var i=0; i < Qs-1 ; i++){
+		 var elem = document.createElement('input');
+		 elem.type = 'button';
+		 elem.value = names[i];
+		 elem.integ = i;
+		 elem.qI = j;
+         elem.style.position = 'absolute';
+         loc1 = (20 + 130*i).toString() + 'px';
+         loc2 = (130 + offset + 70*j).toString() + 'px';
+		 elem.style.left = loc1;
+		 elem.style.top = loc2;
+		 if (AllPrompts[j] == "ALD-Based Dielectric Type" && names[i] == "Choose Material") {
+			elem.onclick = function(){
+				openForm();
+			}
+		 }
+		 else {
+		 elem.onclick = function(){
+			myFunction(this.qI, this.integ);
+			writeFunction(this.qI, this.integ);
+			writeGuide();
+			}
+		}
+		 docFrag.appendChild(elem);
+	}
+	var elem = document.createElement('input');
+	elem.type = 'button';
+	elem.value = names[i];
+	elem.integ = -1;
+	elem.qI = j;
+    elem.style.position = 'absolute';
+    loc1 = (40 + 130*(maxL-1)).toString() + 'px';
+    loc2 = (99 + offset + 70*j).toString() + 'px';
+	elem.style.left = loc1;
+	elem.style.top = loc2;
+	elem.style.color = 'white';
+	elem.style.background = 'blue';
+	elem.onclick = function(){
+		myFunction(this.qI, this.integ);
+		writeFunction(this.qI, this.integ);
+		writeGuide();
+		}
+	docFrag.appendChild(elem);
+	var he = document.createElement('input');
+	he.type = 'button';
+	he.value = 'Show Help';
+	he.integ = (j+1);
+    he.style.position = 'absolute';
+    loc1 = (730).toString() + 'px';
+    loc2 = (99 + offset + 70*j).toString() + 'px';
+	he.style.left = loc1;
+	he.style.top = loc2;
+	he.style.background = 'yellow';
+	he.onclick = function(){
+		helpFunction(this.integ)
+		}
+	docFrag.appendChild(he);
+	document.body.appendChild(docFrag);
+}
+docFrag = document.createDocumentFragment();
+var evalBut = document.createElement('input');
+evalBut.type = 'button';
+evalBut.value = 'Open SNF Tool Links'
+evalBut.style.position = 'absolute';
+loc1 = (20).toString() + 'px';
+loc2 = (170 + offset + 70*j).toString() + 'px';
+evalBut.style.left = loc1;
+evalBut.style.top = loc2;
+evalBut.style.color = 'white';
+evalBut.style.background = 'green';
+evalBut.style.padding = '10px';
+evalBut.onclick = function(){
+	openInfo();
+	}
+docFrag.appendChild(evalBut);
+var clearBut = document.createElement('input');
+clearBut.type = 'button';
+clearBut.value = 'Clear All Answers'
+clearBut.style.position = 'absolute';
+loc1 = (820).toString() + 'px';
+loc2 = (170 + offset + 70*j).toString() + 'px';
+clearBut.style.left = loc1;
+clearBut.style.top = loc2;
+clearBut.style.color = 'white';
+clearBut.style.background = 'blue';
+clearBut.style.padding = '10px';
+clearBut.onclick = function(){
+	for (var j = 0; j < questions; j++){
+		myFunction(j, -1);
+		writeFunction(j, -1);
+		}
+	writeGuide();
+	}
+docFrag.appendChild(clearBut);
+var outP = document.createElement('output');
+outP.id = 'last';
+outP.style.position = 'absolute';
+locP1 = (20).toString() + 'px';
+locP2 = (200 + offset + 70*j).toString() + 'px';
+outP.style.left = locP1;
+outP.style.top = locP2;
+docFrag.appendChild(outP);
+var help = document.createElement('input');
+help.type = 'button';
+help.value = 'Show Instructions';
+help.style.position = 'absolute';
+help.integ = -1;
+locP1 = (680).toString() + 'px';
+locP2 = (170 + offset + 70*j).toString() + 'px';
+help.style.left = locP1;
+help.style.top = locP2;
+help.style.background = 'yellow';
+help.style.padding = '10px';
+help.onclick = function(){
+	helpFunction(this.integ);
+	}
+docFrag.appendChild(help);
+document.body.appendChild(docFrag);
+</script>
