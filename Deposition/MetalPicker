@@ -1,0 +1,480 @@
+<html>
+<header><title>Metal Tool Selection Guide</title>
+<style>
+p.absolute {
+  position: absolute;
+  top: 190px;
+  left: 55px;
+  font-size: 22px;
+}
+p.absolute2 {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  font-size: 15px;
+  max-width: 900px;
+}
+p.absolute3 {
+  position: absolute;
+  top: 760px;
+  left: 55px;
+  font-size: 22px;
+}
+
+body {
+    padding-bottom: 1000px;
+}
+
+
+/* The popup form - hidden by default */
+.form-popup {
+  display: none;
+  position: fixed;
+  top: 200;
+  left: 300px;
+  border: 3px solid #f1f1f1;
+  z-index: 9;
+}
+
+/* Add styles to the form container */
+.form-container {
+  max-width: 300px;
+  padding: 10px;
+  background-color: white;
+}
+
+/* Full-width input fields */
+.form-container input[type=text]{
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  border: none;
+  background: #f1f1f1;
+}
+
+.form-container output[type=text]{
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  border: none;
+  background: #f1f1f1;
+}
+
+/* Set a style for the search button */
+.form-container .cancel {
+  background-color: red;
+  color: white;
+  padding: 16px 20px;
+  cursor: pointer;
+  width: 49.2%;
+  margin-bottom:10px;
+  opacity: 0.8;
+}
+
+.form-container .help {
+  background-color: yellow;
+  color: black;
+  padding: 16px 20px;
+  cursor: pointer;
+  width: 49.2%;
+  margin-bottom:10px;
+  opacity: 0.8;
+}
+
+.form-container .search {
+  background-color: blue;
+  color: white;
+  padding: 16px 20px;
+  cursor: pointer;
+  width: 49.2%;
+  margin-bottom:10px;
+  opacity: 0.8;
+}
+
+.form-container .accept {
+  background-color: #4CAF50;
+  color: white;
+  padding: 16px 20px;
+  cursor: pointer;
+  width: 49.2%;
+  margin-bottom:10px;
+  opacity: 0.8;
+}
+
+</style>
+</header>
+<meta charset="UTF-8">
+<meta name="description" content="Tester page for defining metal selection tool at SNF.">.
+<meta name="author" content="Sam">
+
+<body>
+
+<p class = "absolute", id="bot output"></p>
+<p class = "absolute2", id="help output"></p>
+<p class = "absolute3", id="bot output2"></p>
+<div style="width:760px; height:25px; position: absolute; left:50px; top:210px; border:3px solid green;"></div>
+<div style="width:760px; height:25px; position: absolute; left:50px; top:780px; border:3px solid green;"></div>
+
+<div class="form-popup" id="myForm">
+  <form action="/action_page.php" class="form-container">
+    <h1>Material Search</h1>
+
+    <label for="MatEntry"><b>Enter Material</b></label>
+    <input type="text" placeholder="Enter Material" name="MatEntry" id = "mat_ent" required>
+
+	<label for="MatResult"><b>Material Match</b></label>
+    <p id = "mat_res" required>Result:</p>
+	
+    <button type="button" class="btn search" onclick="lookAtList()">Search</button>
+	<button type="button" class="btn accept" onclick="acceptAnswer()">Accept</button>
+    <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
+	<button type="button" class="btn help" onclick="printList()">Show Materials</button>
+  </form>
+</div>
+
+<script>
+var listPlace = 1;
+var x = [];
+function openForm() {
+  document.getElementById("myForm").style.display = "block";
+}
+
+function closeForm() {
+  document.getElementById("myForm").style.display = "none";
+}
+
+function lookAtList() {
+	var inp = document.getElementById("mat_ent").value;
+	inp = inp.toLowerCase();
+	var str = 'No matches'
+	for (var i = 0; i < list.length; i++) {
+		for (var j = 0; j < AKAs[i].length; j++) {
+			if(inp == AKAs[i][j].toLowerCase()){
+				str = list[i]
+			}
+		}
+	}
+	document.getElementById("mat_res").innerHTML =  "Result: " + str;
+}
+
+function acceptAnswer() {
+	var inp = document.getElementById("mat_res").textContent;
+	inp = inp.substring(8, inp.length);
+	x[listPlace] = inp;
+	document.getElementById(listPlace).innerHTML = 'Deposited Material: ' + inp;
+	writeGuide();
+}
+
+function printList() {
+	document.getElementById("help output").innerHTML = list.toString();
+}
+
+function myFunction(y, a) {
+	x[y] = a;
+	}
+function writeFunction(y, a) {
+	if(a >= 0){
+		var str = Allnames[y][a];
+	}
+	else{
+		var str = "";
+	}
+	document.getElementById(y).innerHTML =  AllPrompts[y] + ': ' + str;
+}
+
+function helpFunction(a){
+	if(a >= 0){
+		var str = Help[a];
+		}
+	else{
+		var str = "Welcome to the tool selection helper! The goal of this tool is to help users pick an appropriate tool from the variety of options at SNF.<br><br>There are a series of tool options listed in textboxes to the left. Click the button corresponding to your needs. If you do not care about the tool option or it does not describe your process (i.e. asking about ALD when you are doing CVD), leave it blank. If you do not understand the question, click the 'Help' button in yellow for more details on what is being asked about.<br><br>The top textbox lists all tools which fit the requirements specified thus far. To open the SNF wiki links for each viable tool, click the green 'Open SNF Wiki Links' button.";
+	}
+	document.getElementById("help output").innerHTML = str;
+}
+function writeGuide(){
+	var toSearch = AllGuides.length;
+	var str = 'Viable Tools: ';
+	var l0 = str.length;
+	var ps = AllGuides[0].length;
+	for (var i = 0; i < toSearch; i++) {
+		var Viable = true;
+		var tempGuide = AllGuides[i];
+		for (var j = 0; j < ps; j++){
+			var bool = false;
+			for (var k = 0; k < tempGuide[j].length; k++){
+				if (tempGuide[j][k] == x[j]){
+					bool = true;
+					}
+				}
+			if (bool == false){
+					Viable = false;
+				}
+			}
+		if(Viable == true){
+			str = str + AllTools[i].toString() + ', ';
+		}
+	}
+	if(str.length > l0){
+		str = str.substring(0, str.length - 2);
+	}
+	document.getElementById("bot output").innerHTML = str;
+	document.getElementById("bot output2").innerHTML = str;
+}
+
+function openInfo(){
+	var toSearch = AllGuides.length;
+	var str = [];
+	var res = [];
+	var l0 = str.length;
+	var ps = AllGuides[0].length;
+	for (var i = 0; i < toSearch; i++) {
+		var Viable = true;
+		var tempGuide = AllGuides[i];
+		for (var j = 0; j < ps; j++){
+			var bool = false;
+			for (var k = 0; k < tempGuide[j].length; k++){
+				if (tempGuide[j][k] == x[j]){
+					bool = true;
+					}
+				}
+			if (bool == false){
+					Viable = false;
+				}
+			}
+			
+		if(Viable == true){
+			str.push(AllTools[i].toString());
+			res.push(AllLinks[i]);
+		}
+	}
+	var result = '';
+	for (var i = 0; i < str.length; i++){
+		 window.open(res[i], "_blank"); 
+	}
+}
+
+var AllPrompts = ["Contamination Status", "Deposited Material", "Conformal", "Wafer Size", "Process Gas", "Temperature", "Batch Size", "Result"];
+var Allnames = [["Clean", "Semiclean", "Gold Cont", "Clear Answer"], ["Show Material Menu", "Not Listed/Personal Source", "Clear Answer"], ["Conformal/Sputter", "Vertical/Evaporated", "Angled", "Hyperconformal/ALD", "Clear Answer"], ["4'' Wafer", "6'' Wafer", "Piece/Chip", "Clear Answer"], ["Need Reactive Gas", "No Gas Contamination", "Clear Answer"], ["Want Substrate Heating", "Clear Answer"], ["<5 Wafers", "<10 Wafers", "Large Batch", "Clear Answer"]];
+
+var AllTools = ["aja", "lesker", "innotec", "intlvac evaporator", "intlvac sputter", "fiji-1", "fiji-2", "fiji-3"];
+var AllLinks = ['https://snfexfab.stanford.edu/equipment/aja-evaporator-aja-evap', 'https://snfexfab.stanford.edu/equipment/lesker-sputter-lesker-sputter',
+'https://snfexfab.stanford.edu/equipment/innotec-evaporator-innotec', 'https://snfexfab.stanford.edu/equipment/intlvac-evaporation-intlvacevap',
+'https://snfexfab.stanford.edu/equipment/intlvac-sputter-intlvacsputter']
+
+var list = ['Pt', 'Au', 'SiO2', 'Ti', 'Fe', 'Cr', 'Ni', 'Ag', 'Al', 'Pd', 'NiO', 'Cu',
+ 'Al2O3', 'AlSi', 'Co', 'CoFeB', 'Ge', 'GST', 'In2O3', 'ITO', 'Mg', 'Mo', 'Ru', 'Sc',
+ 'Si', 'Ta', 'Sn', 'TiN', 'TiW', 'W', 'WO3', 'YSZ', 'ZnO3', 'ZrY',
+ 'Er', 'In', 'Hf', 'Ir', 'Tb', 'Y', 'Zr', 'Nb', 'V', 'Si(B)'];
+var AKAs = [['Pt', 'platinum'], ['Gold', 'Au'], ['silicon oxide', 'oxide', 'silicon dioxide', 'SiO2'],
+['Ti', 'Titanium'], ['Fe', 'Iron'], ['Cr', 'chromium'], ['Ni', 'Nickel'], ['Ag', 'Silver'], ['Al', 'Aluminum'],
+['Pd', 'Palladium'], ['NiO', 'Nickel Oxide'], ['Cu', 'Copper'], ['Al2O3', 'Alumina'], ['AlSi', 'Aluminum Silicon'],
+['Co', 'Cobalt'], ['CoFeB'], ['Ge', 'Germanium'], ['GST', 'GeSbTe'], ['In2O3', 'Indium Oxide'],
+['ITO', 'Indium Tin Oxide', 'InSnO'], ['Mg', 'Magnesium'], ['Mo', 'Molybdenum'], ['Ru', 'Ruthenium'],
+['Sc', 'Scandium'], ['Si', 'Silicon'], ['Ta', 'Tantalum'], ['Sn'], ['TiN', 'Ti Nitride', 'Titanium Nitride'], ['TiW', 'Ti Tungsten', 'Titanium Tungsten'],
+['W', 'Tungsten'], ['WO3', 'Tungsten oxide'], ['YSZ', 'ZrO2Y2O3'], ['ZnO3', 'Zinc Oxide'], ['ZrY', 'Zirconium Yittrium Alloy'],
+['Er', 'Erbium'], ['In', 'Indium'], ['Hf', 'Hafnium'], ['Ir', 'Iridium'], ['Tb', 'Terbium'], ['Y', 'Yttrium'],
+['Zr', 'Zirconium'], ['Nb', 'Niobium'], ['V', 'Vanadium'], ['Si(B)']];
+
+var AllGuides = [];
+AllGuides.push([[-1, 2],
+             [-1, 'Ti', 'SiO2', 'Au', 'Fe', 'Cr', 'Ni', 'Ag', 'Pt', 'Al', 'Pd', 'NiO', 'Cu'], [-1, 1], 
+             [-1, 0, 1, 2], [-1, 1],
+             [-1], [-1, 0, 1]]);
+AllGuides.push([[-1, 2],
+             [-1, 1, 'Pt', 'Au', 'SiO2', 'Ti', 'Fe', 'Cr', 'Ni', 'Ag', 'Al', 'Pd', 'Cu',
+ 'Al2O3', 'AlSi', 'Co', 'CoFeB', 'Ge', 'GST', 'In2O3', 'ITO', 'Mg', 'Mo', 'Ru', 'Sc',
+ 'Si', 'Ta', 'Sn', 'TiN', 'TiW', 'W', 'WO3', 'YSZ', 'ZnO3', 'ZrY'], [-1, 0], 
+             [-1, 0, 1, 2], [-1, 0],
+             [-1, 0], [-1, 0]]);
+AllGuides.push([[-1, 2],
+             [-1, 1, 'Er', 'In', 'Hf', 'Ir', 'Tb', 'Y', 'Ru', 'Al', 'Cr', 'Co',
+			 'Cu', 'Ge', 'Au', 'Fe', 'Mo', 'Ni', 'Pd', 'Si', 'Ag', 'Ta', 'Ti', 'W'], [-1, 1, 2],
+             [-1, 0, 2], [-1, 1],
+             [-1], [-1, 0, 1, 2]]);
+AllGuides.push( [[-1, 0, 1],
+             [-1, 'Al', 'Cr', 'Co', 'Ge', 'Hf', 'Mo', 'Nb', 'Ni', 'Pd',
+			 'Si', 'Ta', 'Ti', 'W', 'V', 'Zr'], [-1, 1, 2],
+             [-1, 0, 1, 2], [-1, 1],
+             [-1], [-1, 0, 1, 2]]);
+AllGuides.push([[-1, 0, 1],
+             [-1, 'Al', 'Co', 'Hf', 'Mo', 'Ni', 'Si(B)', 'Ti', 'Zr'], [-1, 0],
+             [-1, 0], [-1, 0],
+             [-1], [-1, 0, 1, 2]]);
+AllGuides.push([[-1, 1],
+             [-1, 'Pt', 'Ru', 'TiN', 'SiO2', 'Al2O3'], [-1, 3],
+             [-1, 0, 1, 2], [-1, 0],
+             [-1, 0], [-1, 0]]);
+AllGuides.push([[-1, 2],
+             [-1, 'Pt', 'Ru', 'TiN', 'SiO2', 'Al2O3'], [-1, 3],
+             [-1, 0, 1, 2], [-1, 0],
+             [-1, 0], [-1, 0]]);
+AllGuides.push([[-1, 2],
+             [-1, 'SiO2', 'Al2O3'], [-1, 3],
+             [-1, 0, 1, 2], [-1, 0],
+             [-1, 0], [-1, 0]]);
+			 
+questions = Allnames.length;
+maxL = 0;
+var Help = [];
+for (var j = 0; j < questions; j++){
+	var names = Allnames[j];
+	if(names.length > maxL){
+		maxL = names.length;
+	}
+    x.push(-1);
+	Help.push("");
+}
+Help[1] = "SNF classifies tools as clean, semi-clean, or gold-contaminated. Most metal deposition tools are gold contaminated, but some are semi-clean or clean and can be used to deposit non-gold metals. Once a clean wafer is put in a gold-contaminated tool, it is considered gold-contaminated and cannot go in a clean tool again."
+Help[2] = "Some tools have a small list of materials which can be deposited. These are usually the high use tools with loadlock systems or clean systems. Lower use tools or bell jar systems with deposition chambers that are opened each time a user deposits usually are easier to clean and allow for more experimentation. If you think you will be the only person at SNF depositing this material, it will likely be a personal source."
+Help[3] = "Sputtering tools coat all surfaces on the top side of the deposited material or are conformal. Sputtering therefore can cover sidewalls or steps in the substrate, connecting layers and making liftoff more difficult.\n\nEvaporation deposits the material vertically on the substrate. The deposited material therefore will only be continuous across flat surfaces. If you need to evaporate and have the material cover a step, the substrate must be placed at an angle. However, the angling tool and the tilted substrate itself makes the susbtrate tall and so angled evaporation cannot generally be done in loadlock systems."
+Help[4] = "Many tools have wafer holders. On some tools, those wafer holders work for a variety of wafer sizes or wafer holders can be swapped out. For some tools, chips will need to be mounted onto 4'' wafers."
+Help[5] = "It is often useful to add in a reactive gas like O2 or N2 to deposit a nitride or oxide. Even if the target being deposited begins as an oxide, with the heat of deposition additional reactive gas must often be added. Generally sputtering tools allow for reactive gasses and evaporating tools do not."
+Help[6] = "The Lesker sputterer allows the substrate to be heated to change adhesion and film properties."
+Help[7] = "Some loadlock systems (like the Lesker sputterer) can only take one wafer at a time. This makes batches of >5 wafers take a long time on a high demand tool. Other loadlock systems like the AJA allow for 3 wafers at a time, making approximately 10 wafer tasks feasible. The large bell jar-syle systems can generally handle 20-30 wafers at a time and should be used for large batches."
+
+helpFunction(-1)
+myFunction(0, -1);
+writeGuide();
+for (var j = 0; j < questions; j++){
+	var offset = 180;
+	var head = document.createElement('header');
+	docFrag = document.createDocumentFragment();
+	var names = Allnames[j];
+	Qs = names.length;
+	var outP = document.createElement('output');
+	outP.id = j;
+	outP.style.position = 'absolute';
+	locP1 = (25).toString() + 'px';
+    locP2 = (100 + offset + 70*j).toString() + 'px';
+	outP.style.left = locP1;
+	outP.style.top = locP2;
+	//outP.style.border = '1px solid Green';
+	docFrag.appendChild(outP);
+	var box = document.createElement('div');
+	box.style.width = '695';
+	box.style.height = '20';
+	box.style.border = '1px solid #000';
+	box.style.position = 'absolute';
+	box.style.left = (20).toString() + 'px';
+	box.style.top = (99 + offset + 70*j).toString() + 'px';
+	docFrag.appendChild(box);
+	outP.value =  AllPrompts[j] + ':';
+	for (var i=0; i < Qs-1 ; i++){
+		 var elem = document.createElement('input');
+		 elem.type = 'button';
+		 elem.value = names[i];
+		 elem.integ = i;
+		 elem.qI = j;
+         elem.style.position = 'absolute';
+         loc1 = (20 + 170*i).toString() + 'px';
+         loc2 = (130 + offset + 70*j).toString() + 'px';
+		 elem.style.left = loc1;
+		 elem.style.top = loc2;
+		 if (AllPrompts[j] == "Deposited Material" && names[i] == "Show Material Menu") {
+			elem.onclick = function(){
+				openForm();
+			}
+		 }
+		 else {
+		 elem.onclick = function(){
+			myFunction(this.qI, this.integ);
+			writeFunction(this.qI, this.integ);
+			writeGuide();
+			}
+		}
+		 docFrag.appendChild(elem);
+	}
+	var elem = document.createElement('input');
+	elem.type = 'button';
+	elem.value = names[i];
+	elem.integ = -1;
+	elem.qI = j;
+    elem.style.position = 'absolute';
+    loc1 = (20 + 200*(maxL-1)).toString() + 'px';
+    loc2 = (99 + offset + 70*j).toString() + 'px';
+	elem.style.left = loc1;
+	elem.style.top = loc2;
+	elem.style.color = 'white';
+	elem.style.background = 'blue';
+	elem.onclick = function(){
+		myFunction(this.qI, this.integ);
+		writeFunction(this.qI, this.integ);
+		writeGuide();
+		}
+	docFrag.appendChild(elem);
+	var he = document.createElement('input');
+	he.type = 'button';
+	he.value = 'Show Help';
+	he.integ = (j+1);
+    he.style.position = 'absolute';
+    loc1 = (730).toString() + 'px';
+    loc2 = (99 + offset + 70*j).toString() + 'px';
+	he.style.left = loc1;
+	he.style.top = loc2;
+	he.style.background = 'yellow';
+	he.onclick = function(){
+		helpFunction(this.integ)
+		}
+	docFrag.appendChild(he);
+	document.body.appendChild(docFrag);
+}
+docFrag = document.createDocumentFragment();
+var evalBut = document.createElement('input');
+evalBut.type = 'button';
+evalBut.value = 'Open SNF Tool Links'
+evalBut.style.position = 'absolute';
+loc1 = (20).toString() + 'px';
+loc2 = (170 + offset + 70*j).toString() + 'px';
+evalBut.style.left = loc1;
+evalBut.style.top = loc2;
+evalBut.style.color = 'white';
+evalBut.style.background = 'green';
+evalBut.style.padding = '10px';
+evalBut.onclick = function(){
+	openInfo();
+	}
+docFrag.appendChild(evalBut);
+var clearBut = document.createElement('input');
+clearBut.type = 'button';
+clearBut.value = 'Clear All Answers'
+clearBut.style.position = 'absolute';
+loc1 = (820).toString() + 'px';
+loc2 = (170 + offset + 70*j).toString() + 'px';
+clearBut.style.left = loc1;
+clearBut.style.top = loc2;
+clearBut.style.color = 'white';
+clearBut.style.background = 'blue';
+clearBut.style.padding = '10px';
+clearBut.onclick = function(){
+	for (var j = 0; j < questions; j++){
+		myFunction(j, -1);
+		writeFunction(j, -1);
+		}
+	writeGuide();
+	}
+docFrag.appendChild(clearBut);
+var outP = document.createElement('output');
+outP.id = 'last';
+outP.style.position = 'absolute';
+locP1 = (20).toString() + 'px';
+locP2 = (200 + offset + 70*j).toString() + 'px';
+outP.style.left = locP1;
+outP.style.top = locP2;
+docFrag.appendChild(outP);
+var help = document.createElement('input');
+help.type = 'button';
+help.value = 'Show Instructions';
+help.style.position = 'absolute';
+help.integ = -1;
+locP1 = (680).toString() + 'px';
+locP2 = (170 + offset + 70*j).toString() + 'px';
+help.style.left = locP1;
+help.style.top = locP2;
+help.style.background = 'yellow';
+help.style.padding = '10px';
+help.onclick = function(){
+	helpFunction(this.integ);
+	}
+docFrag.appendChild(help);
+document.body.appendChild(docFrag);
+</script>
